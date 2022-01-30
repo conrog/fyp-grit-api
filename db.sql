@@ -1,12 +1,14 @@
-DROP TABLE test_user CASCADE;
+DROP TABLE grit_user CASCADE;
 DROP TABLE workout CASCADE;
 DROP TABLE user_liked_workout;
 
-CREATE TABLE test_user(
+CREATE TABLE grit_user(
 	user_id INT GENERATED ALWAYS AS IDENTITY,
 	user_name TEXT UNIQUE
 );
-ALTER TABLE test_user ADD CONSTRAINT pk_user_id PRIMARY KEY(user_id);
+ALTER TABLE grit_user ADD CONSTRAINT pk_user_id PRIMARY KEY(user_id);
+-- Additional Fields
+ALTER TABLE grit_user ADD COLUMN password TEXT;
 
 CREATE TABLE workout(
 	workout_id INT GENERATED ALWAYS AS IDENTITY,
@@ -18,13 +20,13 @@ CREATE TABLE user_liked_workout(
 	user_id INT,
 	workout_id INT
 );
-ALTER TABLE user_liked_workout ADD CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES test_user(user_id);
+ALTER TABLE user_liked_workout ADD CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES grit_user(user_id);
 ALTER TABLE user_liked_workout ADD CONSTRAINT fk_workout_id FOREIGN KEY (workout_id) REFERENCES workout(workout_id);
 ALTER TABLE user_liked_workout ADD CONSTRAINT pk_user_liked_workouts PRIMARY KEY (user_id, workout_id);
 
-INSERT INTO test_user(user_name) VALUES ('Conor');
-INSERT INTO test_user(user_name) VALUES ('Jack') RETURNING user_id;
-INSERT INTO test_user(user_name) VALUES ('Michelle');
+INSERT INTO grit_user(user_name, password) VALUES ('Conor', 'abc123');
+INSERT INTO grit_user(user_name, password) VALUES ('Jack', 'abc123');
+INSERT INTO grit_user(user_name, password) VALUES ('Michael', 'abc123');
 
 INSERT INTO workout(workout_name) VALUES ('Workout 1: Leg Day');
 INSERT INTO workout(workout_name) VALUES ('Workout 2: Upper');
@@ -57,14 +59,14 @@ SELECT * FROM user_liked_workout WHERE workout_id = 3;
 SELECT workout_id, workout_name 
 FROM user_liked_workout 
 JOIN workout USING (workout_id)
-JOIN test_user USING (user_id)
+JOIN grit_user USING (user_id)
 WHERE user_id = 1;
 
-SELECT * FROM test_user;
+SELECT * FROM grit_user;
 SELECT * FROM workout;
 SELECT * FROM user_liked_workout;
 
 SELECT * FROM user_liked_workout WHERE user_id = 11;
 
-SELECT * FROM test_user;
-DELETE FROM test_user;
+SELECT * FROM grit_user;
+DELETE FROM grit_user;
