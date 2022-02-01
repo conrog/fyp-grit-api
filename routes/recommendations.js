@@ -1,8 +1,9 @@
-let express = require("express");
-let router = express.Router();
+const express = require("express");
+const router = express.Router();
+const auth = require("../middleware/auth");
 
-let reccomendationController = require("../controllers/recomendationsController");
+const reccomendationController = require("../controllers/recomendationsController");
 
-router.get("/:userId", reccomendationController.get_recommended_workouts);
+router.get("/:userId", auth, reccomendationController.get_recommended_workouts);
 
 module.exports = router;
