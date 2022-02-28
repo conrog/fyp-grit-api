@@ -1,5 +1,6 @@
 const db = require("../postgres");
 const jsonwebtoken = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 
 exports.login = async (req, res) => {
   try {
@@ -10,7 +11,12 @@ exports.login = async (req, res) => {
       values: [username],
     });
 
-    if (user && password == user.password) {
+    // TODO: Remove unecrypted password check at later stage
+    if (
+      user &&
+      (password == user.password ||
+        (await bcrypt.compare(password, user.password)))
+    ) {
       const token = jsonwebtoken.sign(
         {
           userId: user.user_id,
