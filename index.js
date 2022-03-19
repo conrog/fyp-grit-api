@@ -1,6 +1,3 @@
-//TODO:
-// Make Register Route
-// Add encryption to passwords
 require("dotenv").config();
 const express = require("express");
 const app = express();
@@ -13,6 +10,7 @@ const loginRouter = require("./routes/login");
 const registerRoute = require("./routes/register");
 const usersRouter = require("./routes/users");
 const workoutsRouter = require("./routes/workouts");
+const exercisesRouter = require("./routes/exercises");
 const reccomendationsRouter = require("./routes/recommendations");
 
 //Middleware
@@ -24,6 +22,7 @@ app.use("/login", loginRouter);
 app.use("/register", registerRoute);
 app.use("/users", usersRouter);
 app.use("/workouts", workoutsRouter);
+app.use("/exercises", exercisesRouter);
 app.use("/reccomendations", reccomendationsRouter);
 
 app.listen(port, () => {
