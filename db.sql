@@ -7,7 +7,6 @@ CREATE TABLE grit_user(
 	user_name TEXT UNIQUE
 );
 ALTER TABLE grit_user ADD CONSTRAINT pk_user_id PRIMARY KEY(user_id);
--- Additional Fields
 ALTER TABLE grit_user ADD COLUMN password TEXT;
 
 CREATE TABLE workout(
@@ -15,6 +14,11 @@ CREATE TABLE workout(
 	workout_name TEXT
 );
 ALTER TABLE workout ADD CONSTRAINT pk_workout_id PRIMARY KEY(workout_id);
+-- Refactor Into CREATE statement
+ALTER TABLE workout ADD COLUMN user_id INT;
+ALTER TABLE workout ADD COLUMN description TEXT;
+ALTER TABLE workout ADD COLUMN exercises JSON;
+ALTER TABLE workout ADD CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES grit_user(user_id);
 
 CREATE TABLE user_liked_workout(
 	user_id INT,
