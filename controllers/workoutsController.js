@@ -12,6 +12,22 @@ exports.get_workouts = (req, res) => {
     });
 };
 
+//Get user_workouts
+exports.get_user_workouts = async (req, res) => {
+  try {
+    const { userId } = jwt_decode(req.headers["authorization"].split(" ")[1]);
+
+    const result = await db.manyOrNone(
+      `SELECT user_name, workout_id, workout_name, description, exercises, to_char(start_time, 'DD-MM-YYYY HH24:MI:SS') as start_time FROM grit_user JOIN workout USING (user_id) WHERE grit_user.user_id = $1`,
+      [userId]
+    );
+
+    res.send(result);
+  } catch (error) {
+    console.log("[GET /workouts] Error: " + error);
+  }
+};
+
 exports.get_liked_workouts_by_user_id = (req, res) => {
   db.manyOrNone(
     "SELECT workout_id, workout_name FROM user_liked_workout JOIN workout USING (workout_id) WHERE user_liked_workout.user_id = $1",
@@ -64,11 +80,11 @@ exports.unlike_workout = (req, res) => {
 exports.create_workout = async (req, res) => {
   try {
     const { userId } = jwt_decode(req.headers["authorization"].split(" ")[1]);
-    let { name, description, exercises } = req.body;
+    let { name, description, exercises, startTime } = req.body;
 
     let result = await db.one(
-      "INSERT INTO workout (user_id, workout_name, description, exercises) VALUES ($1, $2, $3, $4) RETURNING workout_id",
-      [userId, name, description, JSON.stringify(exercises)]
+      "INSERT INTO workout (user_id, workout_name, description, exercises, start_time) VALUES ($1, $2, $3, $4, $5) RETURNING workout_id",
+      [userId, name, description, JSON.stringify(exercises), startTime]
     );
 
     res.status(201).send(result);
