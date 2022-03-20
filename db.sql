@@ -19,6 +19,7 @@ ALTER TABLE workout ADD COLUMN user_id INT;
 ALTER TABLE workout ADD COLUMN description TEXT;
 ALTER TABLE workout ADD COLUMN exercises JSON;
 ALTER TABLE workout ADD CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES grit_user(user_id);
+ALTER TABLE workout ADD COLUMN start_time TIMESTAMP;
 
 CREATE TABLE user_liked_workout(
 	user_id INT,
