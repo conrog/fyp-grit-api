@@ -18,7 +18,7 @@ exports.get_user_workouts = async (req, res) => {
     const { userId } = jwt_decode(req.headers["authorization"].split(" ")[1]);
 
     const result = await db.manyOrNone(
-      `SELECT user_name, workout_id, workout_name, description, exercises, to_char(start_time, 'DD-MM-YYYY HH24:MI:SS') as start_time FROM grit_user JOIN workout USING (user_id) WHERE grit_user.user_id = $1`,
+      `SELECT user_name, workout_id, workout_name, description, exercises, to_char(start_time, 'DD-MM-YYYY HH24:MI') as start_time FROM grit_user JOIN workout USING (user_id) WHERE grit_user.user_id = $1`,
       [userId]
     );
 
@@ -64,11 +64,10 @@ exports.unlike_workout = (req, res) => {
   const { workoutId } = req.params;
 
   db.oneOrNone(
-    "DELETE FROM user_liked_workout WHERE user_id = $1 AND workout_id = $2 RETURNING user_id",
+    "DELETE FROM user_liked_workout WHERE user_id = $1 AND workout_id = $2",
     [userId, workoutId]
   )
-    .then((data) => {
-      // console.log(data);
+    .then(() => {
       res.status(200).send({ message: "Delete Successful" });
     })
     .catch((error) => {
@@ -88,6 +87,21 @@ exports.create_workout = async (req, res) => {
     );
 
     res.status(201).send(result);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+exports.delete_workout = async (req, res) => {
+  try {
+    const { workoutId } = req.params;
+    const { userId } = jwt_decode(req.headers["authorization"].split(" ")[1]);
+    await db.result(
+      "DELETE FROM workout WHERE user_id = $1 AND workout_id = $2",
+      [userId, workoutId]
+    );
+
+    res.status(200).send({ message: "Delete Successful" });
   } catch (error) {
     console.log(error);
   }
