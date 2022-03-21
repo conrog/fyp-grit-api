@@ -79,7 +79,7 @@ exports.unlike_workout = (req, res) => {
 exports.create_workout = async (req, res) => {
   try {
     const { userId } = jwt_decode(req.headers["authorization"].split(" ")[1]);
-    let { name, description, exercises, startTime } = req.body;
+    const { name, description, exercises, startTime } = req.body;
 
     let result = await db.one(
       "INSERT INTO workout (user_id, workout_name, description, exercises, start_time) VALUES ($1, $2, $3, $4, $5) RETURNING workout_id",
@@ -94,14 +94,31 @@ exports.create_workout = async (req, res) => {
 
 exports.delete_workout = async (req, res) => {
   try {
-    const { workoutId } = req.params;
     const { userId } = jwt_decode(req.headers["authorization"].split(" ")[1]);
+    const { workoutId } = req.params;
     await db.result(
       "DELETE FROM workout WHERE user_id = $1 AND workout_id = $2",
       [userId, workoutId]
     );
 
     res.status(200).send({ message: "Delete Successful" });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+exports.edit_workout = async (req, res) => {
+  try {
+    const { userId } = jwt_decode(req.headers["authorization"].split(" ")[1]);
+    const { workoutId } = req.params;
+    const { name, description, exercises } = req.body;
+
+    await db.result(
+      "UPDATE workout SET workout_name = $1, description = $2, exercises = $3 WHERE workout_id = $4 AND user_id = $5",
+      [name, description, JSON.stringify(exercises), workoutId, userId]
+    );
+
+    res.status(200).send({ message: "Update Successful" });
   } catch (error) {
     console.log(error);
   }
