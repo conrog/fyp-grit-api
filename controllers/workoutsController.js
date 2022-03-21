@@ -18,7 +18,7 @@ exports.get_user_workouts = async (req, res) => {
     const { userId } = jwt_decode(req.headers["authorization"].split(" ")[1]);
 
     const result = await db.manyOrNone(
-      `SELECT user_name, workout_id, workout_name, description, exercises, to_char(start_time, 'DD-MM-YYYY HH24:MI') as start_time FROM grit_user JOIN workout USING (user_id) WHERE grit_user.user_id = $1`,
+      `SELECT user_name, workout_id, workout_name, description, exercises, to_char(start_time, 'DD-MM-YYYY HH24:MI') as start_time FROM grit_user JOIN workout USING (user_id) WHERE grit_user.user_id = $1 ORDER BY start_time DESC`,
       [userId]
     );
 
