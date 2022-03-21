@@ -7,6 +7,7 @@ let workoutsController = require("../controllers/workoutsController");
 router
   .use(auth)
   .get("/", workoutsController.get_user_workouts)
+  .delete("/:workoutId", workoutsController.delete_workout)
   .post("/new", workoutsController.create_workout)
   .get("/liked/:userId", workoutsController.get_liked_workouts_by_user_id)
   .post("/:workoutId/like", workoutsController.like_workout)
