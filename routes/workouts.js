@@ -9,7 +9,7 @@ router
   .get("/", workoutsController.get_user_workouts)
   .delete("/:workoutId", workoutsController.delete_workout)
   .post("/new", workoutsController.create_workout)
-  .get("/liked/:userId", workoutsController.get_liked_workouts_by_user_id)
+  .get("/liked", workoutsController.get_liked_workouts)
   .post("/:workoutId/like", workoutsController.like_workout)
   .delete("/:workoutId/like", workoutsController.unlike_workout)
   .put("/:workoutId/edit", workoutsController.edit_workout);
