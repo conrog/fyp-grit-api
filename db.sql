@@ -75,3 +75,10 @@ SELECT * FROM user_liked_workout WHERE user_id = 11;
 
 SELECT * FROM grit_user;
 DELETE FROM grit_user;
+
+-- Get users details 
+SELECT user_name, COUNT(workout.workout_id) AS workout_count 
+FROM grit_user
+JOIN workout USING(user_id) 
+WHERE user_name = 'Conor'
+GROUP BY user_name;

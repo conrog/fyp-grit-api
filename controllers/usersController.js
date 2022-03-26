@@ -1,14 +1,17 @@
 const db = require("../postgres");
 
-exports.get_users = (req, res) => {
-  db.manyOrNone("SELECT * FROM grit_user")
-    .then((data) => {
-      // console.log(data);
-      res.send(data);
-    })
-    .catch((error) => {
-      console.log("[GET /users] Error :" + error);
-    });
+// Todo:
+//  - add WHERE user_name is not equal to the user_name passed in jwt
+
+exports.get_users = async (req, res) => {
+  try {
+    let result = await db.manyOrNone(
+      "SELECT user_name, COUNT(workout.workout_id) AS workout_count FROM grit_user LEFT JOIN workout USING(user_id) GROUP BY user_name;"
+    );
+    res.send(result);
+  } catch (error) {
+    console.log("[GET /users] Error :" + error);
+  }
 };
 
 exports.get_user_by_username = (req, res) => {
