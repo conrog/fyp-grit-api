@@ -79,6 +79,9 @@ DELETE FROM grit_user;
 -- Get users details 
 SELECT user_name, COUNT(workout.workout_id) AS workout_count 
 FROM grit_user
-JOIN workout USING(user_id) 
+LEFT JOIN workout USING(user_id) 
 WHERE user_name = 'Conor'
 GROUP BY user_name;
+
+-- Search users
+SELECT user_name, COUNT(workout.workout_id) FROM grit_user LEFT JOIN workout USING(user_id) WHERE lower(user_name) LIKE '%' || lower('') || '%' GROUP BY user_name;
