@@ -14,20 +14,16 @@ exports.get_users = async (req, res) => {
   }
 };
 
-exports.get_user_by_username = (req, res) => {
-  db.oneOrNone(
-    "SELECT user_id, user_name FROM grit_user WHERE user_name = $1",
-    req.params.user_name
-  )
-    .then((data) => {
-      if (data === null) {
-        res.send(false);
-      }
-      res.send(data);
-    })
-    .catch((error) => {
-      console.log("[GET /user/:user_name] Error: " + error);
-    });
+exports.get_user_by_username = async (req, res) => {
+  try {
+    let data = await db.manyOrNone(
+      "SELECT user_name, COUNT(workout.workout_id) FROM grit_user LEFT JOIN workout USING(user_id) WHERE lower(user_name) LIKE '%' || lower($1) || '%' GROUP BY user_name;",
+      req.params.user_name
+    );
+    res.send(data);
+  } catch (error) {
+    console.log("[GET /user/:user_name] Error: " + error);
+  }
 };
 
 exports.create_user = (req, res) => {
