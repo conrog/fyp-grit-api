@@ -8,6 +8,11 @@ CREATE TABLE grit_user(
 );
 ALTER TABLE grit_user ADD CONSTRAINT pk_user_id PRIMARY KEY(user_id);
 ALTER TABLE grit_user ADD COLUMN password TEXT;
+ALTER TABLE grit_user ADD COLUMN first_name TEXT;
+ALTER TABLE grit_user ADD COLUMN last_name TEXT;
+ALTER TABLE grit_user ADD COLUMN dob DATE;
+ALTER TABLE grit_user ADD COLUMN gender TEXT;
+ALTER TABLE grit_user ADD COLUMN biography TEXT;
 
 CREATE TABLE workout(
 	workout_id INT GENERATED ALWAYS AS IDENTITY,
