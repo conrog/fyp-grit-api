@@ -5,8 +5,10 @@ const db = require("../postgres");
 
 exports.get_users = async (req, res) => {
   try {
+    let query = req.query.text || "";
     let result = await db.manyOrNone(
-      "SELECT user_name, COUNT(workout.workout_id) AS workout_count FROM grit_user LEFT JOIN workout USING(user_id) GROUP BY user_name;"
+      "SELECT user_name, first_name || ' ' || last_name as name, biography, COUNT(workout.workout_id) AS workout_count FROM grit_user LEFT JOIN workout USING(user_id) WHERE lower(user_name) LIKE '%' || lower($1) || '%' GROUP BY user_name, first_name, last_name, biography;",
+      query
     );
     res.send(result);
   } catch (error) {
@@ -16,8 +18,8 @@ exports.get_users = async (req, res) => {
 
 exports.get_user_by_username = async (req, res) => {
   try {
-    let data = await db.manyOrNone(
-      "SELECT user_name, COUNT(workout.workout_id) FROM grit_user LEFT JOIN workout USING(user_id) WHERE lower(user_name) LIKE '%' || lower($1) || '%' GROUP BY user_name;",
+    let data = await db.oneOrNone(
+      "SELECT user_name, first_name, last_name, dob, gender, biography FROM grit_user WHERE user_name LIKE $1",
       req.params.user_name
     );
     res.send(data);
