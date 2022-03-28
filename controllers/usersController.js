@@ -1,4 +1,5 @@
 const db = require("../postgres");
+const jwt_decode = require("jwt-decode");
 
 // Todo:
 //  - add WHERE user_name is not equal to the user_name passed in jwt
@@ -19,12 +20,27 @@ exports.get_users = async (req, res) => {
 exports.get_user_by_username = async (req, res) => {
   try {
     let data = await db.oneOrNone(
-      "SELECT user_name, first_name, last_name, dob, gender, biography FROM grit_user WHERE user_name LIKE $1",
+      "SELECT user_name, first_name, last_name, TO_CHAR(dob, 'yyyy-mm-dd') AS dob, gender, biography FROM grit_user WHERE user_name LIKE $1",
       req.params.user_name
     );
     res.send(data);
   } catch (error) {
     console.log("[GET /user/:user_name] Error: " + error);
+  }
+};
+
+exports.update_user_information = async (req, res) => {
+  try {
+    const { userId } = jwt_decode(req.headers["authorization"].split(" ")[1]);
+    const { firstName, lastName, dob, gender, biography } = req.body;
+
+    await db.query(
+      "UPDATE grit_user SET first_name = $1, last_name = $2, dob = $3, gender = $4, biography = $5 WHERE user_id = $6",
+      [firstName, lastName, dob, gender, biography, userId]
+    );
+    res.send();
+  } catch (error) {
+    console.log("[POST /user/:user_name] Error: " + error);
   }
 };
 
