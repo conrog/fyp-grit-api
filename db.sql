@@ -34,6 +34,14 @@ ALTER TABLE user_liked_workout ADD CONSTRAINT fk_user_id FOREIGN KEY (user_id) R
 ALTER TABLE user_liked_workout ADD CONSTRAINT fk_workout_id FOREIGN KEY (workout_id) REFERENCES workout(workout_id) ON DELETE CASCADE;
 ALTER TABLE user_liked_workout ADD CONSTRAINT pk_user_liked_workouts PRIMARY KEY (user_id, workout_id);
 
+CREATE TABLE follower(
+	user_id INT,
+	follower_id INT
+);
+ALTER TABLE follower ADD CONSTRAINT pk_follower PRIMARY KEY(user_id,follower_id);
+ALTER TABLE follower ADD CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES grit_user(user_id);
+ALTER TABLE follower ADD CONSTRAINT fk_follower_id FOREIGN KEY (follower_id) REFERENCES grit_user(user_id);
+
 INSERT INTO grit_user(user_name, password) VALUES ('Conor', 'abc123');
 INSERT INTO grit_user(user_name, password) VALUES ('Jack', 'abc123');
 INSERT INTO grit_user(user_name, password) VALUES ('Michael', 'abc123');
@@ -90,3 +98,11 @@ GROUP BY user_name;
 
 -- Search users
 SELECT user_name, COUNT(workout.workout_id) FROM grit_user LEFT JOIN workout USING(user_id) WHERE lower(user_name) LIKE '%' || lower('') || '%' GROUP BY user_name;
+
+-- Get Followed Users
+SELECT user_name, first_name || ' ' || last_name as name, biography, COUNT(workout.workout_id) AS workout_count, true AS followed
+FROM follower 
+LEFT JOIN grit_user ON (follower.follower_id = grit_user.user_id)
+LEFT JOIN workout ON (workout.user_id = follower.follower_id)
+WHERE follower.user_id = 10
+GROUP BY user_name, first_name, last_name, biography;

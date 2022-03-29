@@ -1,15 +1,13 @@
 const db = require("../postgres");
 const jwt_decode = require("jwt-decode");
 
-// Todo:
-//  - add WHERE user_name is not equal to the user_name passed in jwt
-
 exports.get_users = async (req, res) => {
   try {
+    const { userId } = jwt_decode(req.headers["authorization"].split(" ")[1]);
     let query = req.query.text || "";
     let result = await db.manyOrNone(
-      "SELECT user_name, first_name || ' ' || last_name as name, biography, COUNT(workout.workout_id) AS workout_count FROM grit_user LEFT JOIN workout USING(user_id) WHERE lower(user_name) LIKE '%' || lower($1) || '%' GROUP BY user_name, first_name, last_name, biography;",
-      query
+      "SELECT user_name, first_name || ' ' || last_name as name, biography, COUNT(workout.workout_id) AS workout_count, EXISTS(SELECT * FROM follower WHERE user_id = $1 AND follower_id = grit_user.user_id ) AS followed FROM grit_user LEFT JOIN workout USING(user_id) WHERE lower(user_name) LIKE '%' || lower($2) || '%' AND grit_user.user_id != $1 GROUP BY user_name, user_id, first_name, last_name, biography;",
+      [userId, query]
     );
     res.send(result);
   } catch (error) {
@@ -41,6 +39,49 @@ exports.update_user_information = async (req, res) => {
     res.send();
   } catch (error) {
     console.log("[POST /user/:user_name] Error: " + error);
+  }
+};
+
+exports.follow_user = async (req, res) => {
+  try {
+    const { userId } = jwt_decode(req.headers["authorization"].split(" ")[1]);
+    await db.query(
+      "INSERT INTO follower(user_id, follower_id) VALUES($1, (SELECT user_id FROM grit_user WHERE user_name = $2 ))",
+      [userId, req.params.user_name]
+    );
+    res.status(201).send({ message: "Insert Successful" });
+  } catch (error) {
+    console.log("[POST /user/:user_name/follow] Error: " + error);
+  }
+};
+
+exports.unfollow_user = async (req, res) => {
+  try {
+    const { userId } = jwt_decode(req.headers["authorization"].split(" ")[1]);
+    const { user_name } = req.params;
+
+    await db.query(
+      "DELETE FROM follower WHERE user_id = $1 AND follower_id = (SELECT user_id FROM grit_user WHERE user_name = $2)",
+      [userId, user_name]
+    );
+
+    res.status(200).send({ message: "Delete Successful" });
+  } catch (error) {
+    console.log("[DELETE /user/:user_name/unfollow] Error: " + error);
+  }
+};
+
+exports.get_user_followers = async (req, res) => {
+  try {
+    const { userId } = jwt_decode(req.headers["authorization"].split(" ")[1]);
+
+    let result = await db.manyOrNone(
+      "SELECT user_name, first_name || ' ' || last_name as name, biography, COUNT(workout.workout_id) AS workout_count, true AS followed FROM follower LEFT JOIN grit_user ON (follower.follower_id = grit_user.user_id) LEFT JOIN workout ON (workout.user_id = follower.follower_id) WHERE follower.user_id = $1 GROUP BY user_name, first_name, last_name, biography",
+      [userId]
+    );
+    res.send(result);
+  } catch (error) {
+    console.log("[GET /user/:user_name/followers] Error: " + error);
   }
 };
 
