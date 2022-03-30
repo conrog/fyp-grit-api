@@ -71,7 +71,7 @@ exports.unfollow_user = async (req, res) => {
   }
 };
 
-exports.get_user_followers = async (req, res) => {
+exports.get_user_following = async (req, res) => {
   try {
     const { userId } = jwt_decode(req.headers["authorization"].split(" ")[1]);
 
@@ -82,6 +82,19 @@ exports.get_user_followers = async (req, res) => {
     res.send(result);
   } catch (error) {
     console.log("[GET /user/:user_name/followers] Error: " + error);
+  }
+};
+
+exports.get_user_followers = async (req, res) => {
+  try {
+    const { userId } = jwt_decode(req.headers["authorization"].split(" ")[1]);
+    let result = await db.manyOrNone(
+      "SELECT user_name, first_name || ' ' || last_name as name, biography, COUNT(workout.workout_id) AS workout_count, EXISTS (SELECT * FROM follower WHERE follower_id = grit_user.user_Id AND user_id=$1) AS followed FROM follower LEFT JOIN grit_user ON (follower.user_id = grit_user.user_id) LEFT JOIN workout ON (workout.user_id = follower.user_id) WHERE follower.follower_id = $1 GROUP BY user_name, first_name, last_name, biography, grit_user.user_id",
+      [userId]
+    );
+    res.send(result);
+  } catch (error) {
+    console.log("[GET /user/:user_name/following] Error: " + error);
   }
 };
 
