@@ -1,8 +1,8 @@
-let express = require("express");
-let router = express.Router();
+const express = require("express");
+const router = express.Router();
 const auth = require("../middleware/auth");
 
-let exersisesController = require("../controllers/exercisesController");
+const exersisesController = require("../controllers/exercisesController");
 
 router.use(auth).get("/", exersisesController.get_exercises);
 

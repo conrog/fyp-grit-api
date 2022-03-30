@@ -42,6 +42,17 @@ ALTER TABLE follower ADD CONSTRAINT pk_follower PRIMARY KEY(user_id,follower_id)
 ALTER TABLE follower ADD CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES grit_user(user_id);
 ALTER TABLE follower ADD CONSTRAINT fk_follower_id FOREIGN KEY (follower_id) REFERENCES grit_user(user_id);
 
+CREATE TABLE workout_comment(
+	comment_id INT GENERATED ALWAYS AS IDENTITY,
+	user_id INT,
+	workout_id INT,
+	posted_date TIMESTAMP,
+	body TEXT
+)
+ALTER TABLE workout_comment ADD CONSTRAINT pk_workout_comment PRIMARY KEY(comment_id);
+ALTER TABLE workout_comment ADD CONSTRAINT fk_workout_comment_user_id FOREIGN KEY (user_id) REFERENCES grit_user(user_id);
+ALTER TABLE workout_comment ADD CONSTRAINT fk_workout_commend_workout_id FOREIGN KEY (workout_id) REFERENCES workout(workout_id);
+
 INSERT INTO grit_user(user_name, password) VALUES ('Conor', 'abc123');
 INSERT INTO grit_user(user_name, password) VALUES ('Jack', 'abc123');
 INSERT INTO grit_user(user_name, password) VALUES ('Michael', 'abc123');
