@@ -11,6 +11,7 @@ const registerRoute = require("./routes/register");
 const usersRouter = require("./routes/users");
 const workoutsRouter = require("./routes/workouts");
 const exercisesRouter = require("./routes/exercises");
+const commentsRouter = require("./routes/comments");
 const reccomendationsRouter = require("./routes/recommendations");
 
 //Middleware
@@ -23,6 +24,7 @@ app.use("/register", registerRoute);
 app.use("/users", usersRouter);
 app.use("/workouts", workoutsRouter);
 app.use("/exercises", exercisesRouter);
+app.use("/comments", commentsRouter);
 app.use("/reccomendations", reccomendationsRouter);
 
 app.listen(port, () => {
