@@ -13,6 +13,7 @@ ALTER TABLE grit_user ADD COLUMN last_name TEXT;
 ALTER TABLE grit_user ADD COLUMN dob DATE;
 ALTER TABLE grit_user ADD COLUMN gender TEXT;
 ALTER TABLE grit_user ADD COLUMN biography TEXT;
+ALTER TABLE grit_user ADD COLUMN is_private BOOLEAN;
 
 CREATE TABLE workout(
 	workout_id INT GENERATED ALWAYS AS IDENTITY,
