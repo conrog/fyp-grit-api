@@ -4,6 +4,6 @@ const auth = require("../middleware/auth");
 
 const reccomendationController = require("../controllers/recomendationsController");
 
-router.get("/:userId", auth, reccomendationController.get_recommended_workouts);
+router.get("/", auth, reccomendationController.get_recommended_workouts);
 
 module.exports = router;
