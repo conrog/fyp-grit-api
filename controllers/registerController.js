@@ -20,7 +20,7 @@ exports.register = async (req, res) => {
     const encryptedPassword = await bcrypt.hash(password, 10);
 
     const newUser = await db.oneOrNone(
-      "INSERT into grit_user(user_name, password) VALUES ($1, $2) RETURNING user_id, user_name",
+      "INSERT into grit_user (user_name, password, is_private) VALUES ($1, $2, false) RETURNING user_id, user_name",
       [username, encryptedPassword]
     );
 
