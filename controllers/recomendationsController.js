@@ -144,7 +144,7 @@ exports.get_recommended_workouts = async (req, res) => {
       let query =
         "SELECT workout_id,user_name, workout_name, description, exercises, to_char(start_time, 'DD-MM-YYYY HH24:MI') as start_time FROM workout LEFT JOIN grit_user USING(user_id) WHERE workout_id IN (" +
         reccomendedWorkoutIds +
-        ")";
+        ") ORDER BY start_time DESC";
       data = await db.query(query);
 
       return res.send(data);
@@ -158,7 +158,7 @@ exports.get_recommended_workouts = async (req, res) => {
       let query =
         "SELECT workout_id,user_name, workout_name, description, exercises, to_char(start_time, 'DD-MM-YYYY HH24:MI') as start_time FROM workout LEFT JOIN grit_user USING(user_id) WHERE workout_id IN (" +
         reccomendedWorkoutIds +
-        ")";
+        ") ORDER BY start_time DESC";
       let data = await db.manyOrNone(query);
 
       return res.send(data);
