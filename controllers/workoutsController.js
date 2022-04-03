@@ -27,7 +27,7 @@ exports.get_following_users_workouts = async (req, res) => {
   try {
     const { userId } = jwt_decode(req.headers["authorization"].split(" ")[1]);
     let result = await db.manyOrNone(
-      "SELECT workout_id,user_name, workout_name, description, exercises, to_char(start_time, 'DD-MM-YYYY HH24:MI') as start_time FROM follower JOIN grit_user ON (grit_user.user_id = follower.follower_id) JOIN workout ON (workout.user_id = follower.follower_id ) WHERE follower.user_id = $1 ORDER BY start_time DESC",
+      "SELECT workout_id,user_name, workout_name, description, exercises, to_char(start_time, 'DD-MM-YYYY HH24:MI') as start_time FROM follower JOIN grit_user ON (grit_user.user_id = follower.follower_id) JOIN workout ON (workout.user_id = follower.follower_id ) WHERE follower.user_id = $1 AND is_private = false ORDER BY start_time DESC",
       [userId]
     );
     res.send(result);
