@@ -24,14 +24,14 @@ ALTER TABLE workout ADD CONSTRAINT pk_workout_id PRIMARY KEY(workout_id);
 ALTER TABLE workout ADD COLUMN user_id INT;
 ALTER TABLE workout ADD COLUMN description TEXT;
 ALTER TABLE workout ADD COLUMN exercises JSON;
-ALTER TABLE workout ADD CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES grit_user(user_id);
+ALTER TABLE workout ADD CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES grit_user(user_id) ON DELETE CASCADE;
 ALTER TABLE workout ADD COLUMN start_time TIMESTAMP;
 
 CREATE TABLE user_liked_workout(
 	user_id INT,
 	workout_id INT
 );
-ALTER TABLE user_liked_workout ADD CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES grit_user(user_id);
+ALTER TABLE user_liked_workout ADD CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES grit_user(user_id) ON DELETE CASCADE;
 ALTER TABLE user_liked_workout ADD CONSTRAINT fk_workout_id FOREIGN KEY (workout_id) REFERENCES workout(workout_id) ON DELETE CASCADE;
 ALTER TABLE user_liked_workout ADD CONSTRAINT pk_user_liked_workouts PRIMARY KEY (user_id, workout_id);
 
@@ -40,8 +40,8 @@ CREATE TABLE follower(
 	follower_id INT
 );
 ALTER TABLE follower ADD CONSTRAINT pk_follower PRIMARY KEY(user_id,follower_id);
-ALTER TABLE follower ADD CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES grit_user(user_id);
-ALTER TABLE follower ADD CONSTRAINT fk_follower_id FOREIGN KEY (follower_id) REFERENCES grit_user(user_id);
+ALTER TABLE follower ADD CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES grit_user(user_id) ON DELETE CASCADE;
+ALTER TABLE follower ADD CONSTRAINT fk_follower_id FOREIGN KEY (follower_id) REFERENCES grit_user(user_id) ON DELETE CASCADE;
 
 CREATE TABLE workout_comment(
 	comment_id INT GENERATED ALWAYS AS IDENTITY,
@@ -51,8 +51,8 @@ CREATE TABLE workout_comment(
 	body TEXT
 )
 ALTER TABLE workout_comment ADD CONSTRAINT pk_workout_comment PRIMARY KEY(comment_id);
-ALTER TABLE workout_comment ADD CONSTRAINT fk_workout_comment_user_id FOREIGN KEY (user_id) REFERENCES grit_user(user_id);
-ALTER TABLE workout_comment ADD CONSTRAINT fk_workout_commend_workout_id FOREIGN KEY (workout_id) REFERENCES workout(workout_id);
+ALTER TABLE workout_comment ADD CONSTRAINT fk_workout_comment_user_id FOREIGN KEY (user_id) REFERENCES grit_user(user_id) ON DELETE CASCADE;
+ALTER TABLE workout_comment ADD CONSTRAINT fk_workout_commend_workout_id FOREIGN KEY (workout_id) REFERENCES workout(workout_id) ON DELETE CASCADE;
 
 INSERT INTO grit_user(user_name, password) VALUES ('Conor', 'abc123');
 INSERT INTO grit_user(user_name, password) VALUES ('Jack', 'abc123');
