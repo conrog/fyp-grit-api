@@ -9,7 +9,7 @@ exports.get_recommended_workouts = async (req, res) => {
   const { userId } = jwt_decode(req.headers["authorization"].split(" ")[1]);
   try {
     let data = await db.manyOrNone(
-      "SELECT DISTINCT user_id FROM user_liked_workout JOIN grit_user USING(user_id) WHERE gender = (SELECT gender FROM grit_user WHERE user_id =$1)",
+      "SELECT DISTINCT user_id FROM user_liked_workout JOIN grit_user USING(user_id) WHERE gender = (SELECT gender FROM grit_user WHERE user_id =$1) AND is_private = false",
       userId
     );
     // Create object lookup which servers as the user-item matrix
@@ -24,10 +24,10 @@ exports.get_recommended_workouts = async (req, res) => {
 
   // Check if user has liked any workouts in order to generate recomendations
   if (matrix[userId] === undefined) {
-    console.log("Error: User: " + userId + " has not liked any workouts ");
+    // console.log("Error: User: " + userId + " has not liked any workouts ");
     try {
       let data = await db.manyOrNone(
-        "SELECT workout_id,user_name, workout_name, description, exercises, to_char(start_time, 'DD-MM-YYYY HH24:MI') as start_time FROM workout LEFT JOIN grit_user USING(user_id) WHERE user_id != $1 AND grit_user.gender = (SELECT gender FROM grit_user WHERE user_id = $1) ORDER BY random()  LIMIT 10;",
+        "SELECT workout_id,user_name, workout_name, description, exercises, to_char(start_time, 'DD-MM-YYYY HH24:MI') as start_time FROM workout LEFT JOIN grit_user USING(user_id) WHERE user_id != $1 AND grit_user.gender = (SELECT gender FROM grit_user WHERE user_id = $1) AND is_private = false ORDER BY random()  LIMIT 10;",
         userId
       );
       return res.send(data);
@@ -40,7 +40,7 @@ exports.get_recommended_workouts = async (req, res) => {
 
   try {
     let data = await db.manyOrNone(
-      "SELECT user_id, workout_id FROM user_liked_workout"
+      "SELECT user_id, workout_id FROM user_liked_workout JOIN grit_user USING (user_id) WHERE is_private = false"
     );
 
     // Populate the user-item matrix:
@@ -133,7 +133,7 @@ exports.get_recommended_workouts = async (req, res) => {
   if (reccomendedWorkoutIds.length < 10) {
     try {
       let data = await db.query(
-        "SELECT workout_id FROM workout LEFT JOIN grit_user USING(user_id) WHERE user_id != $1 AND grit_user.gender = (SELECT gender FROM grit_user WHERE user_id = $1) ORDER BY random() LIMIT $2",
+        "SELECT workout_id FROM workout LEFT JOIN grit_user USING(user_id) WHERE user_id != $1 AND grit_user.gender = (SELECT gender FROM grit_user WHERE user_id = $1) AND is_private = false ORDER BY random() LIMIT $2",
         [userId, 10 - reccomendedWorkoutIds.length]
       );
 
