@@ -87,10 +87,10 @@ exports.get_recommended_workouts = async (req, res) => {
   // console.log("\nSimilar Users:");
   // console.log(similarUsers);
 
-  //KNN where K = 3 nearest neighbours in terms of similarity
-  let K = 3;
+  //KNN where K = 5 nearest neighbours in terms of similarity
+  let K = 5;
   let nearestNeighbours = similarUsers.splice(0, K);
-  // console.log("\n3 Nearest Neighbours:");
+  // console.log("\n5 Nearest Neighbours:");
   // console.log(nearestNeighbours);
 
   // Create object with keys equal to workout_ids with an array of similarity scores

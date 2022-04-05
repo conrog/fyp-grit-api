@@ -5,7 +5,6 @@ const verifyToken = (req, res, next) => {
     req.body.token || req.query.token || req.headers["authorization"];
 
   if (!token) {
-    console.log("Make sure request has correct headers");
     return res.status(403).send("Invalid Token");
   }
   try {

@@ -3,7 +3,8 @@ const jsonwebtoken = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 
 exports.register = async (req, res) => {
-  const { username, password } = req.body;
+  const username = req.body.username.trim();
+  const password = req.body.password.trim();
 
   try {
     const exisitingUser = await db.oneOrNone(
@@ -35,7 +36,7 @@ exports.register = async (req, res) => {
       }
     );
 
-    res.status(200).send({ token });
+    return res.status(200).send({ token });
   } catch (error) {
     console.log(error);
   }

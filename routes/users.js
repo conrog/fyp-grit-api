@@ -12,7 +12,6 @@ router
   .get("/:user_name/followers", userController.get_user_followers)
   .get("/:user_name", userController.get_user_by_username)
   .post("/:user_name", userController.update_user_information)
-  .get("/", userController.get_users)
-  .post("/", userController.create_user);
+  .get("/", userController.get_users);
 
 module.exports = router;
