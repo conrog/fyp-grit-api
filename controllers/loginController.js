@@ -7,16 +7,11 @@ exports.login = async (req, res) => {
     const { username, password } = req.body;
 
     const user = await db.oneOrNone({
-      text: "SELECT * FROM grit_user WHERE user_name = $1",
+      text: "SELECT user_id ,user_name, password FROM grit_user WHERE user_name = $1",
       values: [username],
     });
 
-    // TODO: Remove unecrypted password check at later stage
-    if (
-      user &&
-      (password == user.password ||
-        (await bcrypt.compare(password, user.password)))
-    ) {
+    if (user && (await bcrypt.compare(password, user.password))) {
       const token = jsonwebtoken.sign(
         {
           userId: user.user_id,
@@ -28,13 +23,13 @@ exports.login = async (req, res) => {
         }
       );
 
-      res.status(200).json({ token });
+      return res.status(200).json({ token });
     } else {
-      res
+      return res
         .status(400)
         .send("The username or password you have entered is incorrect.");
     }
-  } catch (err) {
-    console.log(err);
+  } catch (error) {
+    console.log("[POST /login] Error :" + error);
   }
 };
