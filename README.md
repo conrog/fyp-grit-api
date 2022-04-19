@@ -30,7 +30,7 @@ Install the required npm dependencies by running `npm install`.
 
 Create a Docker image of the required PostgreSQL database from the Dockerfile by running `docker build -t grit-db-image ./`
 
-Once the image has been built, launch the Docker PostgreSQL container by running `docker run -d –name grit-db-container –p 5432:5432 grit-db-image`
+Once the image has been built, launch the Docker PostgreSQL container by running `docker run -d --name grit-db-container –p 5432:5432 grit-db-image`
 
 Once the dependencies have installed and the Docker container is running you can start the application by running the following command `npm start`
 
