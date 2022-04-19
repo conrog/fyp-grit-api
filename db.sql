@@ -1,6 +1,8 @@
-DROP TABLE grit_user CASCADE;
-DROP TABLE workout CASCADE;
-DROP TABLE user_liked_workout;
+DROP TABLE IF EXISTS grit_user CASCADE;
+DROP TABLE IF EXISTS workout CASCADE;
+DROP TABLE IF EXISTS user_liked_workout;
+DROP TABLE IF EXISTS follower;
+DROP TABLE IF EXISTS workout_comment;
 
 CREATE TABLE grit_user(
 	user_id INT GENERATED ALWAYS AS IDENTITY,
@@ -48,7 +50,7 @@ CREATE TABLE workout_comment(
 	workout_id INT,
 	posted_date TIMESTAMP,
 	body TEXT
-)
+);
 ALTER TABLE workout_comment ADD CONSTRAINT pk_workout_comment PRIMARY KEY(comment_id);
 ALTER TABLE workout_comment ADD CONSTRAINT fk_workout_comment_user_id FOREIGN KEY (user_id) REFERENCES grit_user(user_id) ON DELETE CASCADE;
 ALTER TABLE workout_comment ADD CONSTRAINT fk_workout_commend_workout_id FOREIGN KEY (workout_id) REFERENCES workout(workout_id) ON DELETE CASCADE;
